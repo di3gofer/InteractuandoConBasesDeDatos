@@ -2,9 +2,8 @@ $(function(){
   var l = new Login();
 })
 
-
-class Login {
-  constructor() {
+class Login{
+  constructor(){
     this.submitEvent()
   }
 
@@ -16,27 +15,36 @@ class Login {
   }
 
   sendForm(){
-    let form_data = new FormData();
-    form_data.append('username', $('#user').val())
-    form_data.append('password', $('#password').val())
+    let usuario = $('#user').val();
+    let pass = $('#password').val();
+    let login = [{
+      correo: usuario,
+      clave: pass
+    }];
+
     $.ajax({
       url: '../server/check_login.php',
       dataType: "json",
       cache: false,
       processData: false,
       contentType: false,
-      data: form_data,
+      data: JSON.stringify(login),
       type: 'POST',
-      success: function(php_response){
-        if (php_response.msg == "OK") {
-          window.location.href = 'main.html';
-        }else {
-          alert(php_response.msg);
-        }
-      },
-      error: function(){
-        alert("error en la comunicación con el servidor");
+      beforeSend: function(){
+        console.log('Enviando datos espere.......');
       }
-    })
+    }).done(function(php_response){
+
+      if (php_response.exito == true) {
+        window.location.href = 'main.html';
+      }else {
+        alert("Usuario o Clave incorrectos !.");
+      }
+
+    }).fail(function(){
+      alert("error en la comunicación con el servidor");
+    }).always(function(){
+
+    });
   }
 }
